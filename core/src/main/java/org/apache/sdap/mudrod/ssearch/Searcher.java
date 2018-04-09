@@ -81,24 +81,6 @@ public class Searcher extends MudrodAbstract implements Serializable {
   }
 
   /**
-   * Method of checking if query exists in a certain attribute
-   *
-   * @param strList attribute value in the form of ArrayList
-   * @param query   query string
-   * @return 1 means query exists, 0 otherwise
-   */
-  public Double exists(ArrayList<String> strList, String query) {
-    Double val = 0.0;
-    if (strList != null) {
-      String str = String.join(", ", strList);
-      if (str != null && str.length() != 0 && str.toLowerCase().trim().contains(query)) {
-        val = 1.0;
-      }
-    }
-    return val;
-  }
-
-  /**
    * Main method of semantic search
    *
    * @param index          index name in Elasticsearch
@@ -227,14 +209,6 @@ public class Searcher extends MudrodAbstract implements Serializable {
       SResult.set(re, "endDate", endDateTxt);
       SResult.set(re, "sensors", String.join(", ", sensors));
 
-      QueryBuilder queryLabelSearch = QueryBuilders.boolQuery().must(QueryBuilders.termQuery("query", query)).must(QueryBuilders.termQuery("dataID", shortName));
-      SearchResponse labelRes = es.getClient().prepareSearch(index).setTypes("trainingranking").setQuery(queryLabelSearch).setSize(5).execute().actionGet();
-      String labelString = null;
-      for (SearchHit label : labelRes.getHits().getHits()) {
-        Map<String, Object> labelItem = label.getSource();
-        labelString = (String) labelItem.get("label");
-      }
-      SResult.set(re, "label", labelString);
       resultList.add(re);
     }
 

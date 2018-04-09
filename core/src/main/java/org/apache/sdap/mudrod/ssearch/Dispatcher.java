@@ -33,7 +33,6 @@ import java.util.Properties;
  * Supports ability to transform regular user query into a semantic query
  */
 public class Dispatcher extends MudrodAbstract {
-  private static final Logger LOG = LoggerFactory.getLogger(Dispatcher.class);
 
   public Dispatcher(Properties props, ESDriver es, SparkDriver spark) {
     super(props, es, spark);
@@ -92,17 +91,11 @@ public class Dispatcher extends MudrodAbstract {
     Map<String, Double> selected_Map = getRelatedTermsByT(input, T);
     selected_Map.put(input, (double) 1);
 
-    String fieldsList[] = { "Dataset-Metadata", "Dataset-ShortName", "Dataset-LongName", 
-        "DatasetParameter-Topic", "DatasetParameter-VariableDetail", "DatasetParameter-Category",
-        "DatasetParameter-Variable", "DatasetParameter-Term",       
-        "DatasetSource-Source-LongName", "DatasetSource-Source-LongName-Full",
-        "DatasetSource-Source-ShortName", "DatasetSource-Source-ShortName-Full", 
-        "DatasetSource-Sensor-LongName", "DatasetSource-Sensor-LongName-Full", "DatasetSource-Sensor-ShortName",
-        "DatasetSource-Sensor-ShortName-Full" };
+    String allField = "_all";
     BoolQueryBuilder qb = new BoolQueryBuilder();
     for (Entry<String, Double> entry : selected_Map.entrySet()) {
       if (query_operator.toLowerCase().trim().equals("phrase")) {
-        qb.should(QueryBuilders.multiMatchQuery(entry.getKey(), fieldsList).boost(entry.getValue().floatValue()).type(MultiMatchQueryBuilder.Type.PHRASE).tieBreaker((float) 0.5)); // when
+        qb.should(QueryBuilders.multiMatchQuery(entry.getKey(), allField).boost(entry.getValue().floatValue()).type(MultiMatchQueryBuilder.Type.PHRASE).tieBreaker((float) 0.5)); // when
         // set
         // to
         // 1.0,
@@ -115,13 +108,12 @@ public class Dispatcher extends MudrodAbstract {
         // fields"
         // query
       } else if (query_operator.toLowerCase().trim().equals("and")) {
-        qb.should(QueryBuilders.multiMatchQuery(entry.getKey(), fieldsList).boost(entry.getValue().floatValue()).operator(MatchQueryBuilder.DEFAULT_OPERATOR.AND).tieBreaker((float) 0.5));
+        qb.should(QueryBuilders.multiMatchQuery(entry.getKey(), allField).boost(entry.getValue().floatValue()).operator(MatchQueryBuilder.DEFAULT_OPERATOR.AND).tieBreaker((float) 0.5));
       } else {
-        qb.should(QueryBuilders.multiMatchQuery(entry.getKey(), fieldsList).boost(entry.getValue().floatValue()).operator(MatchQueryBuilder.DEFAULT_OPERATOR.OR).tieBreaker((float) 0.5));
+        qb.should(QueryBuilders.multiMatchQuery(entry.getKey(), allField).boost(entry.getValue().floatValue()).operator(MatchQueryBuilder.DEFAULT_OPERATOR.OR).tieBreaker((float) 0.5));
       }
     }
 
-    // LOG.info(qb.toString());
     return qb;
   }
 

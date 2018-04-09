@@ -21,14 +21,15 @@ import java.lang.reflect.Field;
 public class SResult {
   public static final String rlist[] = { "term_score", "releaseDate_score", /*"versionNum_score",*/
       "processingL_score", "allPop_score", "monthPop_score", "userPop_score"/*, "termAndv_score"*/ };
-  String shortName = null;
-  String longName = null;
-  String topic = null;
-  String description = null;
+  String shortName;
+  String longName;
+  String topic;
+  String description;
   String relase_date = null;
+  public Integer below = 0;
 
-  public Double final_score = 0.0;
-  public Double term_score = 0.0;
+  public Double final_score;
+  public Double term_score;
   public Double releaseDate_score = 0.0;
   public Double versionNum_score = 0.0;
   public Double processingL_score = 0.0;
@@ -37,43 +38,42 @@ public class SResult {
   public Double monthPop_score = 0.0;
   public Double userPop_score = 0.0;
   public Double termAndv_score = 0.0;
-  public Integer below = 0;
 
-  public Double Dataset_LongName_score = null;
-  public Double Dataset_Metadata_score = null;
-  public Double DatasetParameter_Term_score = null;
-  public Double DatasetSource_Source_LongName_score = null;
-  public Double DatasetSource_Sensor_LongName_score = null;
+  public Double Dataset_LongName_score;
+  public Double Dataset_Metadata_score;
+  public Double DatasetParameter_Term_score;
+  public Double DatasetSource_Source_LongName_score;
+  public Double DatasetSource_Sensor_LongName_score;
 
-  public String version = null;
-  public String processingLevel = null;
-  public String latency = null;
-  public String stopDateLong = null;
-  public String stopDateFormat = null;
-  public Double spatialR_Sat = null;
-  public Double spatialR_Grid = null;
-  public String temporalR = null;
+  public String version;
+  public String processingLevel;
+  public String latency;
+  public String stopDateLong;
+  public String stopDateFormat;
+  public Double spatialR_Sat;
+  public Double spatialR_Grid;
+  public String temporalR;
 
-  public Double releaseDate = null;
-  public Double click = null;
-  public Double term = null;
-  public Double versionNum = null;
-  public Double processingL = null;
-  public Double allPop = null;
-  public Double monthPop = null;
-  public Double userPop = null;
-  public Double termAndv = null;
+  public Double releaseDate;
+  public Double click;
+  public Double term;
+  public Double versionNum;
+  public Double processingL;
+  public Double allPop;
+  public Double monthPop;
+  public Double userPop;
+  public Double termAndv;
 
-  public Double Dataset_LongName = null;
-  public Double Dataset_Metadata = null;
-  public Double DatasetParameter_Term = null;
-  public Double DatasetSource_Source_LongName = null;
-  public Double DatasetSource_Sensor_LongName = null;
+  public Double Dataset_LongName;
+  public Double Dataset_Metadata;
+  public Double DatasetParameter_Term;
+  public Double DatasetSource_Source_LongName;
+  public Double DatasetSource_Sensor_LongName;
 
   public Double prediction = 0.0;
   public String label = null;
 
-  //add by quintinali
+  //add by Yun
   public String startDate;
   public String endDate;
   public String sensors;

@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 import org.apache.sdap.mudrod.discoveryengine.MudrodAbstract;
 import org.apache.sdap.mudrod.driver.ESDriver;
 import org.apache.sdap.mudrod.driver.SparkDriver;
+import org.apache.sdap.mudrod.main.MudrodConstants;
 import org.apache.sdap.mudrod.ssearch.structure.SResult;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -43,51 +44,24 @@ public class Searcher extends MudrodAbstract implements Serializable {
    * 
    */
   private static final long serialVersionUID = 1L;
-  DecimalFormat NDForm = new DecimalFormat("#.##");
-  final Integer MAX_CHAR = 700;
 
   public Searcher(Properties props, ESDriver es, SparkDriver spark) {
     super(props, es, spark);
   }
 
   /**
-   * Method of converting processing level string into a number
-   *
-   * @param pro processing level string
-   * @return processing level number
-   */
-  public Double getProLevelNum(String pro) {
-    if (pro == null) {
-      return 1.0;
-    }
-    Double proNum;
-    Pattern p = Pattern.compile(".*[a-zA-Z].*");
-    if (pro.matches("[0-9]{1}[a-zA-Z]{1}")) {
-      proNum = Double.parseDouble(pro.substring(0, 1));
-    } else if (p.matcher(pro).find()) {
-      proNum = 1.0;
-    } else {
-      proNum = Double.parseDouble(pro);
-    }
-
-    return proNum;
-  }
-
-  public Double getPop(Double pop) {
-    if (pop > 1000) {
-      pop = 1000.0;
-    }
-    return pop;
-  }
-
-  /**
    * Main method of semantic search
    *
-   * @param index          index name in Elasticsearch
-   * @param type           type name in Elasticsearch
-   * @param query          regular query string
-   * @param queryOperator query mode- query, or, and
-   * @param rankOption a keyword used to dertermine the ElasticSearch SortOrder 
+   * @param index
+   *          index name in Elasticsearch
+   * @param type
+   *          type name in Elasticsearch
+   * @param query
+   *          regular query string
+   * @param queryOperator
+   *          query mode- query, or, and
+   * @param rankOption
+   *          a keyword used to dertermine the ElasticSearch SortOrder
    * @return a list of search result
    */
   @SuppressWarnings("unchecked")
@@ -145,70 +119,12 @@ public class Searcher extends MudrodAbstract implements Serializable {
     Dispatcher dp = new Dispatcher(this.getConfig(), this.getES(), null);
     BoolQueryBuilder qb = dp.createSemQuery(query, 1.0, queryOperator);
     List<SResult> resultList = new ArrayList<>();
-
     SearchRequestBuilder builder = es.getClient().prepareSearch(index).setTypes(type).setQuery(qb).addSort(sortFiled, order).setSize(500).setTrackScores(true);
     SearchResponse response = builder.execute().actionGet();
 
+    SResult r = new SResult();
     for (SearchHit hit : response.getHits().getHits()) {
-      Map<String, Object> result = hit.getSource();
-      Double relevance = Double.valueOf(NDForm.format(hit.getScore()));
-      String shortName = (String) result.get("Dataset-ShortName");
-      String longName = (String) result.get("Dataset-LongName");
-
-      ArrayList<String> topicList = (ArrayList<String>) result.get("DatasetParameter-Variable");
-      String topic = "";
-      if (null != topicList) {
-        topic = String.join(", ", topicList);
-      }
-      String content = (String) result.get("Dataset-Description");
-
-      if (!"".equals(content)) {
-        int maxLength = (content.length() < MAX_CHAR) ? content.length() : MAX_CHAR;
-        content = content.trim().substring(0, maxLength - 1) + "...";
-      }
-
-      ArrayList<String> longdate = (ArrayList<String>) result.get("DatasetCitation-ReleaseDateLong");
-      Date date = new Date(Long.valueOf(longdate.get(0)));
-      SimpleDateFormat df2 = new SimpleDateFormat("MM/dd/yyyy");
-      String dateText = df2.format(date);
-
-      // start date
-      Long start = (Long) result.get("DatasetCoverage-StartTimeLong-Long");
-      Date startDate = new Date(start);
-      String startDateTxt = df2.format(startDate);
-
-      // end date
-      String end = (String) result.get("Dataset-DatasetCoverage-StopTimeLong");
-      String endDateTxt = "";
-      if ("".equals(end)) {
-        endDateTxt = "Present";
-      } else {
-        Date endDate = new Date(Long.valueOf(end));
-        endDateTxt = df2.format(endDate);
-      }
-
-      String processingLevel = (String) result.get("Dataset-ProcessingLevel");
-      Double proNum = getProLevelNum(processingLevel);
-
-      Double userPop = getPop(((Integer) result.get("Dataset-UserPopularity")).doubleValue());
-      Double allPop = getPop(((Integer) result.get("Dataset-AllTimePopularity")).doubleValue());
-      Double monthPop = getPop(((Integer) result.get("Dataset-MonthlyPopularity")).doubleValue());
-
-      List<String> sensors = (List<String>) result.get("DatasetSource-Sensor-ShortName");
-
-      SResult re = new SResult(shortName, longName, topic, content, dateText);
-
-      SResult.set(re, "term", relevance);
-      SResult.set(re, "releaseDate", Long.valueOf(longdate.get(0)).doubleValue());
-      SResult.set(re, "processingLevel", processingLevel);
-      SResult.set(re, "processingL", proNum);
-      SResult.set(re, "userPop", userPop);
-      SResult.set(re, "allPop", allPop);
-      SResult.set(re, "monthPop", monthPop);
-      SResult.set(re, "startDate", startDateTxt);
-      SResult.set(re, "endDate", endDateTxt);
-      SResult.set(re, "sensors", String.join(", ", sensors));
-
+      SResult re = r.makeResult(props.getProperty(MudrodConstants.RANKING_META_FORMAT), hit);
       resultList.add(re);
     }
 
@@ -218,12 +134,18 @@ public class Searcher extends MudrodAbstract implements Serializable {
   /**
    * Method of semantic search to generate JSON string
    *
-   * @param index          index name in Elasticsearch
-   * @param type           type name in Elasticsearch
-   * @param query          regular query string
-   * @param queryOperator query mode- query, or, and
-   * @param rankOption a keyword used to dertermine the ElasticSearch SortOrder 
-   * @param rr             selected ranking method
+   * @param index
+   *          index name in Elasticsearch
+   * @param type
+   *          type name in Elasticsearch
+   * @param query
+   *          regular query string
+   * @param queryOperator
+   *          query mode- query, or, and
+   * @param rankOption
+   *          a keyword used to dertermine the ElasticSearch SortOrder
+   * @param rr
+   *          selected ranking method
    * @return search results
    */
   public String ssearch(String index, String type, String query, String queryOperator, String rankOption, Ranker rr) {
@@ -240,18 +162,16 @@ public class Searcher extends MudrodAbstract implements Serializable {
       file.addProperty("Long Name", (String) SResult.get(aLi, "longName"));
       file.addProperty("Topic", (String) SResult.get(aLi, "topic"));
       file.addProperty("Description", (String) SResult.get(aLi, "description"));
-      file.addProperty("Release Date", (String) SResult.get(aLi, "relase_date"));
-      fileList.add(file);
-
+      file.addProperty("Release Date", (String) SResult.get(aLi, "release_date"));
       file.addProperty("Start/End Date", (String) SResult.get(aLi, "startDate") + " - " + (String) SResult.get(aLi, "endDate"));
       file.addProperty("Processing Level", (String) SResult.get(aLi, "processingLevel"));
-
       file.addProperty("Sensor", (String) SResult.get(aLi, "sensors"));
+      fileList.add(file);
     }
     JsonElement fileListElement = gson.toJsonTree(fileList);
 
-    JsonObject pDResults = new JsonObject();
-    pDResults.add("PDResults", fileListElement);
-    return pDResults.toString();
+    JsonObject SResults = new JsonObject();
+    SResults.add("PDResults", fileListElement);
+    return SResults.toString();
   }
 }

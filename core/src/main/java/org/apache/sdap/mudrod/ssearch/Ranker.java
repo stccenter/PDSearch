@@ -45,16 +45,6 @@ public class Ranker extends MudrodAbstract implements Serializable {
   }
 
   /**
-   * Method of comparing results based on final score
-   */
-  public class ResultComparator implements Comparator<SResult> {
-    @Override
-    public int compare(SResult o1, SResult o2) {
-      return o2.below.compareTo(o1.below);
-    }
-  }
-
-  /**
    * Method of ranking a list of result
    *
    * @param resultList result list
@@ -97,13 +87,12 @@ public class Ranker extends MudrodAbstract implements Serializable {
         double o1Score = SResult.get(o1, str);
         instList.add(o2Score - o1Score);
       }
-
       double[] ins = instList.stream().mapToDouble(i -> i).toArray();
       LabeledPoint insPoint = new LabeledPoint(99.0, Vectors.dense(ins));
-      int prediction = (int)le.classify(insPoint);
-      
+      int prediction = (int)le.classify(insPoint);  
       return prediction;
     }
   }
+
 
 }

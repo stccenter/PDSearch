@@ -13,121 +13,66 @@
  */
 package org.apache.sdap.mudrod.ssearch.structure;
 
+import org.apache.sdap.mudrod.main.MudrodConstants;
+import org.elasticsearch.search.SearchHit;
+
 import java.lang.reflect.Field;
 
 /**
- * Data structure class for search result
+ * Interface class for search result. All metadata formats should be mapped to this format
  */
 public class SResult {
-  public static final String rlist[] = { "term_score", "releaseDate_score", /*"versionNum_score",*/
-      "processingL_score", "allPop_score", "monthPop_score", "userPop_score"/*, "termAndv_score"*/ };
-  String shortName;
-  String longName;
-  String topic;
-  String description;
-  String relase_date = null;
-  public Integer below = 0;
-
-  public Double final_score;
-  public Double term_score;
-  public Double releaseDate_score = 0.0;
-  public Double versionNum_score = 0.0;
-  public Double processingL_score = 0.0;
-  public Double click_score = 0.0;
-  public Double allPop_score = 0.0;
-  public Double monthPop_score = 0.0;
-  public Double userPop_score = 0.0;
-  public Double termAndv_score = 0.0;
-
-  public Double Dataset_LongName_score;
-  public Double Dataset_Metadata_score;
-  public Double DatasetParameter_Term_score;
-  public Double DatasetSource_Source_LongName_score;
-  public Double DatasetSource_Sensor_LongName_score;
-
+  // Ranking features
+  public static final String rlist[] = { "term_score", "releaseDate_score", "processingL_score", 
+      "allPop_score", "monthPop_score", "userPop_score"};
+  
+  public String fieldsList[] = {};
+  
+  // Descriptive variables
+  public String shortName;
+  public String longName;
+  public String topic;
+  public String description;
+  public String release_date;
   public String version;
   public String processingLevel;
-  public String latency;
-  public String stopDateLong;
-  public String stopDateFormat;
-  public Double spatialR_Sat;
-  public Double spatialR_Grid;
-  public String temporalR;
-
-  public Double releaseDate;
-  public Double click;
+  public String startDate;
+  public String endDate;
+  public String sensors;
+ 
+  // Numeric variables
   public Double term;
-  public Double versionNum;
+  public Double releaseDate;
   public Double processingL;
   public Double allPop;
   public Double monthPop;
   public Double userPop;
-  public Double termAndv;
-
-  public Double Dataset_LongName;
-  public Double Dataset_Metadata;
-  public Double DatasetParameter_Term;
-  public Double DatasetSource_Source_LongName;
-  public Double DatasetSource_Sensor_LongName;
+  
+  // Normalized numeric variables
+  public Double term_score;
+  public Double releaseDate_score;
+  public Double processingL_score;
+  public Double allPop_score;
+  public Double monthPop_score;
+  public Double userPop_score;
 
   public Double prediction = 0.0;
-  public String label = null;
+  public Integer below = 0;
 
-  //add by Yun
-  public String startDate;
-  public String endDate;
-  public String sensors;
-
-  /**
-   * @param shortName   short name of dataset
-   * @param longName    long name of dataset
-   * @param topic       topic of dataset
-   * @param description description of dataset
-   * @param date        release date of dataset
-   */
-  public SResult(String shortName, String longName, String topic, String description, String date) {
-    this.shortName = shortName;
-    this.longName = longName;
-    this.topic = topic;
-    this.description = description;
-    this.relase_date = date;
+  public SResult() {
   }
-
+  
   public SResult(SResult sr) {
     for (String aRlist : rlist) {
       set(this, aRlist, get(sr, aRlist));
     }
   }
 
-  /**
-   * Method of getting export header
-   *
-   * @param delimiter the delimiter used to separate strings
-   * @return header
-   */
-  public static String getHeader(String delimiter) {
-    String str = "";
-    for (String aRlist : rlist) {
-      str += aRlist + delimiter;
-    }
-    str = str + "label" + "\n";
-    return "ShortName" + delimiter + "below" + delimiter + str;
-  }
-
-  /**
-   * Method of get a search results as string
-   *
-   * @param delimiter the delimiter used to separate strings
-   * @return search result as string
-   */
-  public String toString(String delimiter) {
-    String str = "";
-    for (String aRlist : rlist) {
-      double score = get(this, aRlist);
-      str += score + delimiter;
-    }
-    str = str + label + "\n";
-    return shortName + delimiter + below + delimiter + str;
+  public SResult makeResult(String format, SearchHit hit) {
+    if(MudrodConstants.PODAAC_META_FORMAT.equals(format))
+      return new Podaac(hit);
+    else
+      return null;
   }
 
   /**
@@ -179,5 +124,4 @@ public class SResult {
     }
     return null;
   }
-
 }

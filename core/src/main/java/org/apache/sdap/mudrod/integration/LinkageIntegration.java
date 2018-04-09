@@ -174,7 +174,7 @@ public class LinkageIntegration extends DiscoveryStepAbstract {
     aggregateRelatedTerms(input, MudrodConstants.USE_HISTORY_LINKAGE_TYPE);
     aggregateRelatedTerms(input, MudrodConstants.CLICK_STREAM_LINKAGE_TYPE);
     aggregateRelatedTerms(input, MudrodConstants.METADATA_LINKAGE_TYPE);
-    aggregateRelatedTermsSWEET(input, MudrodConstants.ONTOLOGY_LINKAGE_TYPE);
+    //aggregateRelatedTermsSWEET(input, MudrodConstants.ONTOLOGY_LINKAGE_TYPE);
 
     return termList.stream().collect(Collectors.groupingBy(w -> w.term));
   }

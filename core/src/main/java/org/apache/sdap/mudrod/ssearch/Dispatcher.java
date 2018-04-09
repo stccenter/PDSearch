@@ -17,6 +17,7 @@ import org.apache.sdap.mudrod.discoveryengine.MudrodAbstract;
 import org.apache.sdap.mudrod.driver.ESDriver;
 import org.apache.sdap.mudrod.driver.SparkDriver;
 import org.apache.sdap.mudrod.integration.LinkageIntegration;
+import org.apache.sdap.mudrod.main.MudrodConstants;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
@@ -91,26 +92,16 @@ public class Dispatcher extends MudrodAbstract {
     Map<String, Double> selected_Map = getRelatedTermsByT(input, T);
     selected_Map.put(input, (double) 1);
 
-    String allField = "_all";
+    String fieldsList[] = props.getProperty(MudrodConstants.RANKING_SEARCH_FIELDS).split(",");
+    
     BoolQueryBuilder qb = new BoolQueryBuilder();
     for (Entry<String, Double> entry : selected_Map.entrySet()) {
       if (query_operator.toLowerCase().trim().equals("phrase")) {
-        qb.should(QueryBuilders.multiMatchQuery(entry.getKey(), allField).boost(entry.getValue().floatValue()).type(MultiMatchQueryBuilder.Type.PHRASE).tieBreaker((float) 0.5)); // when
-        // set
-        // to
-        // 1.0,
-        // it
-        // would
-        // be
-        // equal
-        // to
-        // "most
-        // fields"
-        // query
+        qb.should(QueryBuilders.multiMatchQuery(entry.getKey(), fieldsList).boost(entry.getValue().floatValue()).type(MultiMatchQueryBuilder.Type.PHRASE).tieBreaker((float) 0.5));
       } else if (query_operator.toLowerCase().trim().equals("and")) {
-        qb.should(QueryBuilders.multiMatchQuery(entry.getKey(), allField).boost(entry.getValue().floatValue()).operator(MatchQueryBuilder.DEFAULT_OPERATOR.AND).tieBreaker((float) 0.5));
+        qb.should(QueryBuilders.multiMatchQuery(entry.getKey(), fieldsList).boost(entry.getValue().floatValue()).operator(MatchQueryBuilder.DEFAULT_OPERATOR.AND).tieBreaker((float) 0.5));
       } else {
-        qb.should(QueryBuilders.multiMatchQuery(entry.getKey(), allField).boost(entry.getValue().floatValue()).operator(MatchQueryBuilder.DEFAULT_OPERATOR.OR).tieBreaker((float) 0.5));
+        qb.should(QueryBuilders.multiMatchQuery(entry.getKey(), fieldsList).boost(entry.getValue().floatValue()).operator(MatchQueryBuilder.DEFAULT_OPERATOR.OR).tieBreaker((float) 0.5));
       }
     }
 

@@ -147,6 +147,12 @@ public interface MudrodConstants {
   public static final String RANKING_MODEL = "mudrod.ranking.model";
   
   public static final String RANKING_ML = "mudrod.ranking.machine.learning";
+  
+  public static final String RANKING_META_FORMAT = "mudrod.ranking.metadata.format";
+  
+  public static final String RANKING_SEARCH_FIELDS = "mudrod.ranking.search.fields";
+  
+  public static final String PODAAC_META_FORMAT = "podaac";
 
   public static final String REQUEST_TIME_GAP = "mudrod.request.time.gap";
 

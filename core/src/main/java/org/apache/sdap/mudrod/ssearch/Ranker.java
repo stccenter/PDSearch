@@ -65,7 +65,8 @@ public class Ranker extends MudrodAbstract implements Serializable {
         SResult.set(resultList.get(i), scoreId, score);
       }
     }
-
+    // 1. Another way is to just produce the top K results at first, and then if users click the next page, 
+    // produce the next k results iteratively 2. Use spark to do it in a parallel manner
     Collections.sort(resultList, new ResultComparator());
     return resultList;
   }

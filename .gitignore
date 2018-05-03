@@ -16,3 +16,4 @@ core/maven-eclipse.xml
 service/.classpath
 web/.classpath
 /.metadata/
+/.recommenders/

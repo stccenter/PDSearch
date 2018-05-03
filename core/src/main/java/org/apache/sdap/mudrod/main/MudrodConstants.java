@@ -153,6 +153,8 @@ public interface MudrodConstants {
   public static final String RANKING_SEARCH_FIELDS = "mudrod.ranking.search.fields";
   
   public static final String PODAAC_META_FORMAT = "podaac";
+  
+  public static final String PD_META_FORMAT = "pd";
 
   public static final String REQUEST_TIME_GAP = "mudrod.request.time.gap";
 

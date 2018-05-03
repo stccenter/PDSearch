@@ -71,6 +71,8 @@ public class SResult {
   public SResult makeResult(String format, SearchHit hit) {
     if(MudrodConstants.PODAAC_META_FORMAT.equals(format))
       return new Podaac(hit);
+    else if(MudrodConstants.PD_META_FORMAT.equals(format))
+      return new PlanetDefense(hit);
     else
       return null;
   }

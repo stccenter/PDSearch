@@ -70,7 +70,6 @@ public class LinkageIntegration extends DiscoveryStepAbstract {
    */
   @Override
   public Object execute() {
-    getIngeratedList("ocean wind", 11);
     return null;
   }
 
@@ -93,8 +92,10 @@ public class LinkageIntegration extends DiscoveryStepAbstract {
     try {
       map = aggregateRelatedTermsFromAllmodel(es.customAnalyzing(props.getProperty(INDEX_NAME), input));
     } catch (InterruptedException | ExecutionException e) {
-      LOG.error("Error applying majority rule", e);
+      LOG.error("Fail to find semantic linkage for the query! Make sure you have the linkage established.", e);
     }
+    
+    if(map==null) return null;
 
     for (Entry<String, List<LinkedTerm>> entry : map.entrySet()) {
       List<LinkedTerm> list = entry.getValue();
@@ -148,15 +149,18 @@ public class LinkageIntegration extends DiscoveryStepAbstract {
    * @return a JSON object of related terms along with corresponding similarities
    */
   public JsonObject getIngeratedListInJson(String input) {
-    Map<String, Double> sortedMap = appyMajorRule(input);
+    Map<String, Double> sortedMap = appyMajorRule(input);   
     int count = 0;
     Map<String, Double> trimmedMap = new LinkedHashMap<>();
-    for (Entry<String, Double> entry : sortedMap.entrySet()) {
-      if (!entry.getKey().contains("china")) {
-        if (count < 10) {
-          trimmedMap.put(entry.getKey(), entry.getValue());
+    if(sortedMap!=null)
+    {
+      for (Entry<String, Double> entry : sortedMap.entrySet()) {
+        if (!entry.getKey().contains("china")) {
+          if (count < 10) {
+            trimmedMap.put(entry.getKey(), entry.getValue());
+          }
+          count++;
         }
-        count++;
       }
     }
 
@@ -176,7 +180,10 @@ public class LinkageIntegration extends DiscoveryStepAbstract {
     aggregateRelatedTerms(input, MudrodConstants.METADATA_LINKAGE_TYPE);
     //aggregateRelatedTermsSWEET(input, MudrodConstants.ONTOLOGY_LINKAGE_TYPE);
 
-    return termList.stream().collect(Collectors.groupingBy(w -> w.term));
+    if(termList.size()==0) 
+      return null;
+    else
+      return termList.stream().collect(Collectors.groupingBy(w -> w.term));
   }
 
   public int getModelweight(String model) {
@@ -216,6 +223,9 @@ public class LinkageIntegration extends DiscoveryStepAbstract {
   }
 
   public void aggregateRelatedTerms(String input, String model) {
+    boolean exists = es.getClient().admin().indices().prepareTypesExists(props.getProperty(INDEX_NAME)).setTypes(model).execute().actionGet().isExists();
+    if (!exists) return;
+    
     //get the first 10 related terms
     SearchResponse usrhis = es.getClient().prepareSearch(props.getProperty(INDEX_NAME)).setTypes(model).setQuery(QueryBuilders.termQuery("keywords", input)).addSort(WEIGHT, SortOrder.DESC).setSize(11)
         .execute().actionGet();

@@ -71,6 +71,12 @@ public class Dispatcher extends MudrodAbstract {
     LinkageIntegration li = new LinkageIntegration(this.props, this.es, null);
     Map<String, Double> sortedMap = li.appyMajorRule(input);
     Map<String, Double> selected_Map = new HashMap<>();
+    
+    if(sortedMap==null)
+    {
+      selected_Map.put(input, 1.0);
+      return selected_Map;
+    }
 
     for (Entry<String, Double> entry : sortedMap.entrySet()) {
       if (entry.getValue() >= T) {

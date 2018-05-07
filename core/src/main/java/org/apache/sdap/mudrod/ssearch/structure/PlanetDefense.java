@@ -35,11 +35,11 @@ public class PlanetDefense extends SResult {
   public PlanetDefense(SearchHit hit) {
     Map<String, Object> result = hit.getSource();
     this.term = Double.valueOf(NDForm.format(hit.getScore()));
-    this.shortName = "";
-    this.longName = (String) result.get("title");
+    this.shortName = (String) result.get("title");
+    this.longName = "";
     this.topic = (String) result.get("gold_keywords");
     this.description = getDescription(result);
-    this.releaseDate = getReleaseD(result);
+    this.releaseDate = 0.0;
     this.startDate = "";
     this.endDate = "";
     
@@ -52,31 +52,6 @@ public class PlanetDefense extends SResult {
     this.monthPop = 0.0;
     this.sensors = "";
   }
-/*
-  public Double getProLevel(String pro) {
-    if (pro == null) {
-      return 1.0;
-    }
-    Double proNum;
-    Pattern p = Pattern.compile(".*[a-zA-Z].*");
-    if (pro.matches("[0-9]{1}[a-zA-Z]{1}")) {
-      proNum = Double.parseDouble(pro.substring(0, 1));
-    } else if (p.matcher(pro).find()) {
-      proNum = 1.0;
-    } else {
-      proNum = Double.parseDouble(pro);
-    }
-
-    return proNum;
-  }
-
-  public Double getNormPopularity(Double pop) {
-    if (pop > 1000) {
-      pop = 1000.0;
-    }
-    return pop;
-  }
-*/
   
   public String getDescription(Map<String, Object> result) {
     String content = (String) result.get("content");
@@ -86,38 +61,4 @@ public class PlanetDefense extends SResult {
     }
     return content;
   }
-  
-  public Double getReleaseD(Map<String, Object> result){
-    @SuppressWarnings("unchecked")
-    String longdate = (String) result.get("date");
-    Date date = new Date(longdate.substring(0, 10));
-    this.release_date = df2.format(date);
-    return Long.valueOf(longdate.substring(0, 10)).doubleValue();
-  }
- /*
-  public String getStartD(Map<String, Object> result){
-    Long start = (Long) result.get("DatasetCoverage-StartTimeLong-Long");
-    Date startDate = new Date(start);
-    return df2.format(startDate);
-  }
-  
-  public String getEndD(Map<String, Object> result){
-    String end = (String) result.get("Dataset-DatasetCoverage-StopTimeLong");
-    String endDateTxt = "";
-    if ("".equals(end)) {
-      endDateTxt = "Present";
-    } else {
-      Date endDate = new Date(Long.valueOf(end));
-      endDateTxt = df2.format(endDate);
-    }
-    return endDateTxt;
-  }
-  */
-  /*
-  public String getSensors(Map<String, Object> result){
-    @SuppressWarnings("unchecked")
-    List<String> sensors = (List<String>) result.get("DatasetSource-Sensor-ShortName");
-    return String.join(", ", sensors);
-  }
-  */
 }

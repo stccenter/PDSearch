@@ -111,7 +111,7 @@ public class Searcher extends MudrodAbstract implements Serializable {
       order = SortOrder.DESC;
       break;
     default:
-      sortFiled = "Dataset-ShortName.raw";
+      sortFiled = props.getProperty(MudrodConstants.RANKING_SEARCH_FIELDS).split(",")[0];
       order = SortOrder.ASC;
       break;
     }

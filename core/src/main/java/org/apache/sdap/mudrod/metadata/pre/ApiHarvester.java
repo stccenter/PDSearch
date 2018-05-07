@@ -94,7 +94,6 @@ public class ApiHarvester extends DiscoveryStepAbstract {
       directory.mkdir();
     File[] fList = directory.listFiles();
     for (File file : fList) {
-      //System.out.println(file);
       InputStream is;
       try {
         is = new FileInputStream(file);

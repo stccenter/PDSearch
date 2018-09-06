@@ -24,6 +24,28 @@
 
         <div class="col-md-3 col-sm-4">
             <div class="panel panel-primary sidenav">
+			
+				<div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">Related Analysis</a>
+                    </h4>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse in">
+                    <div class="panel-body" ng-controller="vocabularyCtrl">
+                        <div ng-if="searchComplete && vm.PDItems.length > 0" ng-model="searchComplete">
+                            <a ng-href="#/metadataView?query={{searchOptions.query| urlencode}}" title="{{searchOptions.query}}">{{searchOptions.query}}</a>
+                        </div>
+
+                        <div ng-if="searchComplete && vm.PDItems.length === 0" ng-model="searchComplete">
+                            <span style="font-size: 1em;">No related analysis found</span>
+                        </div>
+
+                        <div ng-if="!searchComplete" ng-model="searchComplete" id="spinner">
+                            <img src="images/spinner.gif" title="Search in progress" style="height: 5em;">
+                        </div>
+                    </div>
+                </div>
+				
                 <div class="panel-heading">
                     <h4 class="panel-title">
                         <a data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">Related Searches</a>

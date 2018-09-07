@@ -13,7 +13,7 @@
   -->
 <header>
 
-    <nav class="navbar navbar-inverse mudrod-navbar">
+    <nav class="navbar mudrod-navbar">
         <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mudrod-collapse" aria-expanded="false">
@@ -22,7 +22,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand navbar-link" href="https://mudrod.github.io/">MUDROD</a>
+                <a class="navbar-brand navbar-link" href="http://pd.cloud.gmu.edu/">PD Mitigation Gateway</a>
             </div>
             <div class="collapse navbar-collapse" id="mudrod-collapse">
                 <div class="nav navbar-nav">
@@ -34,7 +34,7 @@
                 <form id="searchForm" class="navbar-form navbar-right" autocomplete="off" ng-controller="searchCtrl">
                     <div class="form-group">
                         <input id="query" type="text" role="search" class="form-control" ng-model="options.query" ng-keyup="complete(options.query)"
-                               placeholder="Enter ocean concepts (e.g. ocean wind) to search">
+                               placeholder="Enter PD concepts (e.g. Bennu) to search">
                         <ul class="list-group search-ul autocomplete" ng-model="hidethis" ng-hide="hidethis">
                             <li class="list-group-item" ng-repeat="searchdata in filterSearch" ng-click="fillTextbox(searchdata.value)">{{searchdata.value}}</li>
                         </ul>

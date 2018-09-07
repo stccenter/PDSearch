@@ -75,7 +75,6 @@ a:link, a:visited {
     padding: 6em;
     width: 80%;
     margin: 15em auto 15em;
-    color: #777;
     border-radius: 6px;
     box-shadow: 0 0 20px 0 rgba(17, 17, 17, 0.2);
 }
@@ -88,7 +87,6 @@ a:link, a:visited {
     font-weight: normal;
     margin: 0 0 .2em 0;
     font-size: 2.2em;
-    text-shadow: 1px 1px 1px #111;
 }
 
 .searchBox {
@@ -356,8 +354,8 @@ a {
 
 .search-form button {
     position: absolute;
-    right: 10px;
-    top: 3px;
+    right: 20px;
+    top: 10px;
     border: 0;
     padding: 0;
     background: none;
@@ -379,10 +377,11 @@ a {
     width: 100%;
     background: #f3f3f3;
     box-shadow: none !important;
+    padding: 20px;
 }
 
 .searchOption {
-    color: white;
+    color: #111111;
 }
 
 li {

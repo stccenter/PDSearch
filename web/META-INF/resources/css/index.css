@@ -6,7 +6,7 @@ html, body {
 
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background-color: black;
+    background-color: white;
 }
 
 h1, h2, h3, p {
@@ -16,6 +16,10 @@ h1, h2, h3, p {
 .toolbar {
     background-color: #2276ac;
     height: 60px;
+}
+
+.navbar {
+    border-radius: 0px; 
 }
 
 article, aside, details, figcaption, figure, header, hgroup, main, menu, nav, section, summary {
@@ -56,14 +60,14 @@ a:link, a:visited {
     width: 100%;
     padding-top: 1em;
     background-size: cover;
-    background: transparent url('../images/OceanWave.jpg') no-repeat fixed 0 0;
+    background-color: #fff;
 }
 
 .view-area-scroll {
     width: 100%;
     height: 800px;
     background-size: cover;
-    background: transparent url('../images/OceanWave.jpg') no-repeat scroll 0 0;
+    background-color: #fff;
 }
 
 .landing-dialog {
@@ -71,9 +75,9 @@ a:link, a:visited {
     padding: 6em;
     width: 80%;
     margin: 15em auto 15em;
-    color: #fff;
+    color: #777;
     border-radius: 6px;
-    box-shadow: 0 0 20px 0 rgba(17, 17, 17, 0.7);
+    box-shadow: 0 0 20px 0 rgba(17, 17, 17, 0.2);
 }
 
 .landing-dialog-header, .noscript, .old-ie {

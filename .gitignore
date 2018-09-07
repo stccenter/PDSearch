@@ -17,3 +17,4 @@ service/.classpath
 web/.classpath
 service/mudrod_service.log
 .DS_Store
+service/mudrod_service.log

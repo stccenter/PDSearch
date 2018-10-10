@@ -82,6 +82,7 @@ mudrodControllers.controller('metadataViewCtrl', ['$rootScope', '$scope', '$loca
 
         var vm = this;
         vm.PDItems = [];
+        vm.Asteroids = ["Bennu", "Ida"]
         vm.pager = {};
         vm.setPage = setPage;
         vm.rankData = rankData;

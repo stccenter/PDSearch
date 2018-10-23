@@ -82,12 +82,13 @@ mudrodControllers.controller('metadataViewCtrl', ['$rootScope', '$scope', '$loca
 
         var vm = this;
         vm.PDItems = [];
-        vm.Asteroids = ["Bennu", "Ida"]
+        vm.Asteroids = ["bennu", "ida"];
+        vm.findAsteroid = findAsteroid;
         vm.pager = {};
         vm.setPage = setPage;
         vm.rankData = rankData;
         vm.totalMatches = 0;
-        vm.rankopt = $routeParams.rankopt ? $routeParams.rankopt : 'Rank-SVM';
+        vm.rankopt = $routeParams.rankopt ? $routeParams.rankopt : 'Rank-SVM'; 
 
         var word = String();
         var opt = String();
@@ -146,6 +147,12 @@ mudrodControllers.controller('metadataViewCtrl', ['$rootScope', '$scope', '$loca
             var qParams = $location.search();
             qParams[paramName] = paramValue;
             $location.search(qParams);
+        }
+
+        function findAsteroid(searchKeyword) {
+            var keywordFound = vm.Asteroids.indexOf(searchKeyword.toLowerCase()) > -1;
+            return keywordFound;
+            
         }
 
         function searchMetadata() {

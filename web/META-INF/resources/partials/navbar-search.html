@@ -27,7 +27,7 @@
             <div class="collapse navbar-collapse" id="mudrod-collapse">
                 <div class="nav navbar-nav">
                     <div class="nav-item active">
-                        <a class="nav-link" href="#/">Home <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="#" onclick="goBack()">Back</a>
                     </div>
                 </div>
 
@@ -58,5 +58,11 @@
                 </form>
             </div>
         </div>
+        <script>
+        function goBack() {
+            var currentUrl = window.location.href;
+            window.history.back();
+        }
+        </script>
     </nav>
 </header>

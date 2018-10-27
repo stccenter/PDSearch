@@ -110,6 +110,14 @@ public class Searcher extends MudrodAbstract implements Serializable {
       sortFiled = "DatasetCoverage-StopTimeLong-Long";
       order = SortOrder.DESC;
       break;
+    case "Rank-Credibility":
+        sortFiled = "ranking";
+        order = SortOrder.DESC;
+        break;
+    case "Rank-Modify-Time":
+        sortFiled = "lastModified";
+        order = SortOrder.DESC;
+        break;
     default:
       sortFiled = props.getProperty(MudrodConstants.RANKING_SEARCH_FIELDS).split(",")[0];
       order = SortOrder.ASC;
@@ -121,6 +129,8 @@ public class Searcher extends MudrodAbstract implements Serializable {
     List<SResult> resultList = new ArrayList<>();
     SearchRequestBuilder builder = es.getClient().prepareSearch(index).setTypes(type).setQuery(qb).addSort(sortFiled, order).setSize(500).setTrackScores(true);
     SearchResponse response = builder.execute().actionGet();
+    
+    //System.out.println(builder.toString());
 
     SResult r = new SResult();
     for (SearchHit hit : response.getHits().getHits()) {
@@ -150,9 +160,9 @@ public class Searcher extends MudrodAbstract implements Serializable {
    */
   public String ssearch(String index, String type, String query, String queryOperator, String rankOption, Ranker rr) {
     List<SResult> li = searchByQuery(index, type, query, queryOperator, rankOption);
-    if ("Rank-SVM".equals(rankOption)) {
+    /*if ("Rank-SVM".equals(rankOption)) {
       li = rr.rank(li);
-    }
+    }*/
     Gson gson = new Gson();
     List<JsonObject> fileList = new ArrayList<>();
 

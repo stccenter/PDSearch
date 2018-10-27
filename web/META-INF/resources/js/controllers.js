@@ -88,7 +88,7 @@ mudrodControllers.controller('metadataViewCtrl', ['$rootScope', '$scope', '$loca
         vm.setPage = setPage;
         vm.rankData = rankData;
         vm.totalMatches = 0;
-        vm.rankopt = $routeParams.rankopt ? $routeParams.rankopt : 'Rank-SVM'; 
+        vm.rankopt = $routeParams.rankopt ? $routeParams.rankopt : 'Rank-Credibility'; 
 
         var word = String();
         var opt = String();

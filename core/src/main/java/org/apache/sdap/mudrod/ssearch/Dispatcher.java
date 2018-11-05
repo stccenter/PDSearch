@@ -110,6 +110,8 @@ public class Dispatcher extends MudrodAbstract {
         qb.should(QueryBuilders.multiMatchQuery(entry.getKey(), fieldsList).boost(entry.getValue().floatValue()).operator(MatchQueryBuilder.DEFAULT_OPERATOR.OR).tieBreaker((float) 0.5));
       }
     }
+    
+    qb.filter(QueryBuilders.termQuery("lang", "en"));
 
     return qb;
   }

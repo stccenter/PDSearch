@@ -36,7 +36,7 @@ public class PlanetDefense extends SResult {
     Map<String, Object> result = hit.getSource();
     this.term = Double.valueOf(NDForm.format(hit.getScore()));
     this.shortName = (String) result.get("title");
-    this.longName = "";
+    this.longName = (String) result.get("url");
     this.topic = (String) result.get("gold_keywords");
     this.description = getDescription(result);
     this.releaseDate = 0.0;

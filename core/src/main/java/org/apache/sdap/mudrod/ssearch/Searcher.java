@@ -127,7 +127,7 @@ public class Searcher extends MudrodAbstract implements Serializable {
     Dispatcher dp = new Dispatcher(this.getConfig(), this.getES(), null);
     BoolQueryBuilder qb = dp.createSemQuery(query, 1.0, queryOperator);
     List<SResult> resultList = new ArrayList<>();
-    SearchRequestBuilder builder = es.getClient().prepareSearch(index).setTypes(type).setQuery(qb).addSort(sortFiled, order).setSize(500).setTrackScores(true);
+    SearchRequestBuilder builder = es.getClient().prepareSearch(index).setTypes(type).setQuery(qb)/*.addSort(sortFiled, order)*/.setSize(500).setTrackScores(true);
     SearchResponse response = builder.execute().actionGet();
     
     //System.out.println(builder.toString());

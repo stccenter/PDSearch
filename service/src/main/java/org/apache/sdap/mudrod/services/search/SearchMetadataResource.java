@@ -70,5 +70,4 @@ public class SearchMetadataResource {
     LOG.debug("Response received: {}", json);
     return Response.ok(json, MediaType.APPLICATION_JSON).build();
   }
-
 }

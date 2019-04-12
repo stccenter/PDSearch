@@ -31,7 +31,7 @@
 
     <properties>
         <!-- This property is the name of the directory containing the SVM/SGD Model. It is used during build to create a zip file from this directory -->
-        <svmSgdModel.value>javaSVMWithSGDModel</svmSgdModel.value>
+        <svmSgdModel.value>model</svmSgdModel.value>
     </properties>
 
     <dependencies>
@@ -143,6 +143,31 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
+        
+        <dependency>      
+		    <groupId>org.deeplearning4j</groupId>      
+		    <artifactId>deeplearning4j-core</artifactId>
+		    <version>1.0.0-beta3</version>    
+		  </dependency>         
+		  <dependency>      
+		    <groupId>org.deeplearning4j</groupId>      
+		    <artifactId>deeplearning4j-modelimport</artifactId>      
+		    <version>1.0.0-beta3</version>    
+		  </dependency>                       
+		  <dependency>      
+		    <groupId>org.nd4j</groupId>      
+		    <artifactId>nd4j-native-platform</artifactId>
+		    <version>1.0.0-beta3</version>    
+		  </dependency>
+		  <dependency>      
+		    <groupId>org.eclipse.jetty</groupId>      
+		    <artifactId>jetty-server</artifactId>      
+		    <version>9.4.9.v20180320</version>   
+		  </dependency>  <dependency>      
+		    <groupId>com.google.cloud.dataflow</groupId>      
+		    <artifactId>google-cloud-dataflow-java-sdk-all</artifactId>  
+		    <version>2.2.0</version>     
+		  </dependency>
 
     </dependencies>
 

@@ -22,10 +22,7 @@ import org.apache.sdap.mudrod.ssearch.structure.SResult;
 import org.apache.sdap.mudrod.utils.Stats;
 import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
-import org.deeplearning4j.nn.modelimport.keras.exceptions.InvalidKerasConfigurationException;
-import org.deeplearning4j.nn.modelimport.keras.exceptions.UnsupportedKerasConfigurationException;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,18 +33,15 @@ import java.util.Properties;
 /**
  * Supports the ability to calculating ranking score
  */
-public class Ranker extends MudrodAbstract implements Serializable {
+public class TransferRanker extends MudrodAbstract implements Serializable {
   private static final long serialVersionUID = 1L;
   transient List<SResult> resultList = new ArrayList<>();
   Learner le = null;
 
-  public Ranker(Properties props, ESDriver es, SparkDriver spark) throws IOException, InvalidKerasConfigurationException, UnsupportedKerasConfigurationException {
+  public TransferRanker(Properties props, ESDriver es, SparkDriver spark) {
     super(props, es, spark);
-    if("1".equals(props.getProperty(MudrodConstants.RANKING_ML))){
+    if("1".equals(props.getProperty(MudrodConstants.RANKING_ML)))
       le = new Learner(spark, props.getProperty(MudrodConstants.RANKING_MODEL));
-    }else if ("2".equals(props.getProperty(MudrodConstants.RANKING_ML))){
-      le = new Learner(props.getProperty(MudrodConstants.RANKING_MODEL));
-    }
   }
 
   /**
@@ -77,28 +71,6 @@ public class Ranker extends MudrodAbstract implements Serializable {
     return resultList;
   }
   
-  public List<SResult> rank(String query, List<SResult> resultList) {
-	    if(le==null) return resultList;
-	    /*Stats stats = new Stats();
-	    
-	    for (int i = 0; i < resultList.size(); i++) {
-	      for (int m = 0; m < SResult.rlist.length; m++) {
-	        String att = SResult.rlist[m].split("_")[0];
-	        double val = SResult.get(resultList.get(i), att);
-	        double mean = stats.getMean(att, resultList);
-	        double std = stats.getStdDev(att, resultList);
-	        double score = stats.getZscore(val, mean, std);
-	        String scoreId = SResult.rlist[m];
-	        SResult.set(resultList.get(i), scoreId, score);
-	      }
-	    }*/
-	    // 1. Another way is to just produce the top K results at first, and then if users click the next page, 
-	    // produce the next k results iteratively 2. Use spark to do it in a parallel manner
-	    le.setQuery(query);
-	    Collections.sort(resultList, new ResultComparator());
-	    return resultList;
-	  }
-  
   /**
    * Method of comparing results based on final score
    */
@@ -110,7 +82,7 @@ public class Ranker extends MudrodAbstract implements Serializable {
      * @return 1 meaning o1>o2, 0 meaning o1=o2
      */
     public int compare(SResult o1, SResult o2) {
-      /*List<Double> instList = new ArrayList<>();
+      List<Double> instList = new ArrayList<>();
       for (String str: SResult.rlist) {
         double o2Score = SResult.get(o2, str);
         double o1Score = SResult.get(o1, str);
@@ -119,18 +91,7 @@ public class Ranker extends MudrodAbstract implements Serializable {
       double[] ins = instList.stream().mapToDouble(i -> i).toArray();
       LabeledPoint insPoint = new LabeledPoint(99.0, Vectors.dense(ins));
       int prediction = (int)le.classify(insPoint);  
-      return prediction;*/
-    	
-    	//double[] o2WordIndex = SResult.get(o2, "wordindex");
-        //double[] o1WordIndex = SResult.get(o1, "wordindex");
-    	
-    	double[] o2WordIndex = new double[]{1,2,3,7,8};
-        double[] o1WordIndex = new double[]{1,2,3,4,5};
-    	
-    	int prediction = (int)Math.round(le.classify(o1WordIndex, o2WordIndex));  
-    	
-    	System.out.println(prediction);
-        return prediction;  
+      return prediction;
     }
   }
 }

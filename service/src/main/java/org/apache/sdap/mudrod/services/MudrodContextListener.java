@@ -25,7 +25,10 @@ import org.apache.sdap.mudrod.ontology.Ontology;
 import org.apache.sdap.mudrod.ontology.OntologyFactory;
 import org.apache.sdap.mudrod.ssearch.Ranker;
 import org.apache.sdap.mudrod.ssearch.Searcher;
+import org.deeplearning4j.nn.modelimport.keras.exceptions.InvalidKerasConfigurationException;
+import org.deeplearning4j.nn.modelimport.keras.exceptions.UnsupportedKerasConfigurationException;
 
+import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -63,7 +66,19 @@ public class MudrodContextListener implements ServletContextListener {
 
     ServletContext ctx = arg0.getServletContext();
     Searcher searcher = new Searcher(props, me.getESDriver(), null);
-    Ranker ranker = new Ranker(props, me.getESDriver(), me.getSparkDriver());
+    Ranker ranker = null;
+	try {
+		ranker = new Ranker(props, me.getESDriver(), me.getSparkDriver());
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (InvalidKerasConfigurationException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (UnsupportedKerasConfigurationException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
     ctx.setAttribute("MudrodInstance", me);
     ctx.setAttribute("MudrodSearcher", searcher);
     ctx.setAttribute("MudrodRanker", ranker);

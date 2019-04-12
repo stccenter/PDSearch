@@ -160,12 +160,13 @@ public class Searcher extends MudrodAbstract implements Serializable {
    */
   public String ssearch(String index, String type, String query, String queryOperator, String rankOption, Ranker rr) {
     List<SResult> li = searchByQuery(index, type, query, queryOperator, rankOption);
-    /*if ("Rank-SVM".equals(rankOption)) {
-      li = rr.rank(li);
+    /*if ("Rank-Transfer".equals(rankOption)) {
+      li = rr.rank(query, li);
     }*/
+    li = rr.rank(query, li);
+    
     Gson gson = new Gson();
     List<JsonObject> fileList = new ArrayList<>();
-
     for (SResult aLi : li) {
       JsonObject file = new JsonObject();
       file.addProperty("Short Name", (String) SResult.get(aLi, "shortName"));

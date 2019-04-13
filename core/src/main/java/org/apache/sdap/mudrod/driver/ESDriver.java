@@ -419,7 +419,8 @@ public class ESDriver implements Serializable {
     List<String> suggestList = new ArrayList<>();
 
     // please make sure that the completion field is configured in the ES mapping
-    CompletionSuggestionBuilder suggestionsBuilder = SuggestBuilders.completionSuggestion("Dataset-Metadata").prefix(term, Fuzziness.fromEdits(2)).size(100);
+	String tableName = this.props.get(MudrodConstants.ES_INDEX_NAME);
+    CompletionSuggestionBuilder suggestionsBuilder = SuggestBuilders.completionSuggestion(tableName).prefix(term, Fuzziness.fromEdits(2)).size(100);
     SearchRequestBuilder suggestRequestBuilder = getClient().prepareSearch(index).suggest(new SuggestBuilder().addSuggestion("completeMe", suggestionsBuilder));
     SearchResponse sr = suggestRequestBuilder.setFetchSource(false).execute().actionGet();
 

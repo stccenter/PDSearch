@@ -130,11 +130,17 @@ public class Searcher extends MudrodAbstract implements Serializable {
     SearchRequestBuilder builder = es.getClient().prepareSearch(index).setTypes(type).setQuery(qb)/*.addSort(sortFiled, order)*/.setSize(500).setTrackScores(true);
     SearchResponse response = builder.execute().actionGet();
     
-    //System.out.println(builder.toString());
+    System.out.println(builder.toString());
 
     SResult r = new SResult();
     for (SearchHit hit : response.getHits().getHits()) {
       SResult re = r.makeResult(props.getProperty(MudrodConstants.RANKING_META_FORMAT), hit);
+      
+      //String shortname = re.shortName;
+      //System.out.println(shortname);
+      
+      //String longName = re.longName;
+      //System.out.println(longName);
       resultList.add(re);
     }
 
@@ -160,9 +166,14 @@ public class Searcher extends MudrodAbstract implements Serializable {
    */
   public String ssearch(String index, String type, String query, String queryOperator, String rankOption, Ranker rr) {
     List<SResult> li = searchByQuery(index, type, query, queryOperator, rankOption);
-    /*if ("Rank-SVM".equals(rankOption)) {
-      li = rr.rank(li);
-    }*/
+//    if ("Rank-SVM".equals(rankOption)) {
+//      li = rr.rank(li);
+//    }
+    
+    if ("Rank-Credibility".equals(rankOption)) {
+      li = rr.rank_credibility(li);
+    }
+    
     Gson gson = new Gson();
     List<JsonObject> fileList = new ArrayList<>();
 

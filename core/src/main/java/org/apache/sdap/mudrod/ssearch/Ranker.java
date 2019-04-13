@@ -71,6 +71,33 @@ public class Ranker extends MudrodAbstract implements Serializable {
     return resultList;
   }
   
+  public List<SResult> rank_credibility(List<SResult> resultList) {
+	   
+	    Stats stats = new Stats();
+	    
+	    for (int i = 0; i < resultList.size(); i++) {
+	    
+	      double tmpScore = 0.0;
+	      for (int m = 0; m < SResult.rlist.length; m++) {
+	        String att = SResult.rlist[m].split("_")[0];
+	        double val = SResult.get(resultList.get(i), att);
+	        double mean = stats.getMean(att, resultList);
+	        double std = stats.getStdDev(att, resultList);
+	        double score = stats.getZscore(val, mean, std);
+	        String scoreId = SResult.rlist[m];
+	        SResult.set(resultList.get(i), scoreId, score);
+	        
+	        tmpScore += score;
+	      }
+	      
+	      //weighed average score
+	      SResult.set(resultList.get(i), "w_score", tmpScore);
+	    }
+	   
+	    Collections.sort(resultList, new WScoreComparator());
+	    return resultList;
+	  }
+  
   /**
    * Method of comparing results based on final score
    */
@@ -94,6 +121,26 @@ public class Ranker extends MudrodAbstract implements Serializable {
       return prediction;
     }
   }
+  
+  public class WScoreComparator implements Comparator<SResult> {
+	    @Override
+	    /**
+	     * @param o1  one item from the search result list
+	     * @param o2 another item from the search result list
+	     * @return 1 meaning o1>o2, 0 meaning o1=o2
+	     */
+	    public int compare(SResult o1, SResult o2) {
+	    
+	    	double o2WScore = SResult.get(o2, "w_score");
+	        double o1WScore = SResult.get(o1, "w_score");
+	        
+	      if(o2WScore > o1WScore) {
+	    	  return 1;
+	      }else {
+	    	  return -1;
+	      }
+	    }
+	  }
 
 
 }

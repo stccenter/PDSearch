@@ -111,7 +111,7 @@ public class Dispatcher extends MudrodAbstract {
       }
     }
     
-    qb.filter(QueryBuilders.termQuery("lang", "en"));
+    //qb.filter(QueryBuilders.termQuery("lang", "en"));
 
     return qb;
   }

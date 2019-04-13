@@ -23,8 +23,10 @@ import java.lang.reflect.Field;
  */
 public class SResult {
   // Ranking features
-  public static final String rlist[] = { "term_score", "releaseDate_score", "processingL_score", 
-      "allPop_score", "monthPop_score", "userPop_score"};
+//  public static final String rlist[] = { "term_score", "releaseDate_score", "processingL_score", 
+//      "allPop_score", "monthPop_score", "userPop_score"};
+	
+	public static final String rlist[] = { "term_score", "credibility_score"};
   
   public String fieldsList[] = {};
   
@@ -42,6 +44,7 @@ public class SResult {
  
   // Numeric variables
   public Double term;
+  public Double credibility;
   public Double releaseDate;
   public Double processingL;
   public Double allPop;
@@ -50,6 +53,8 @@ public class SResult {
   
   // Normalized numeric variables
   public Double term_score;
+  public Double credibility_score;
+  public Double w_score;
   public Double releaseDate_score;
   public Double processingL_score;
   public Double allPop_score;

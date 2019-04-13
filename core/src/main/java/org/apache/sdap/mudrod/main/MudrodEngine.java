@@ -27,6 +27,7 @@ import org.apache.sdap.mudrod.discoveryengine.MetadataDiscoveryEngine;
 import org.apache.sdap.mudrod.discoveryengine.OntologyDiscoveryEngine;
 import org.apache.sdap.mudrod.discoveryengine.RecommendEngine;
 import org.apache.sdap.mudrod.discoveryengine.WeblogDiscoveryEngine;
+import org.apache.sdap.mudrod.discoveryengine.PDRank;
 import org.apache.sdap.mudrod.driver.ESDriver;
 import org.apache.sdap.mudrod.driver.SparkDriver;
 import org.apache.sdap.mudrod.integration.LinkageIntegration;
@@ -68,6 +69,7 @@ public class MudrodEngine {
   private static final String META_INGEST = "metaIngest";
   private static final String FULL_INGEST = "fullIngest";
   private static final String PROCESSING = "processingWithPreResults";
+  private static final String RANKING = "rankingForPD";
   private static final String ES_HOST = "esHost";
   private static final String ES_TCP_PORT = "esTCPPort";
   private static final String ES_HTTP_PORT = "esPort";
@@ -258,23 +260,28 @@ public class MudrodEngine {
    * weblog, ontology and metadata, linkage discovery and integration.
    */
   public void startProcessing() {
-    DiscoveryEngineAbstract wd = new WeblogDiscoveryEngine(props, es, spark);
-    wd.process();
+//    DiscoveryEngineAbstract wd = new WeblogDiscoveryEngine(props, es, spark);
+//    wd.process();
 
     DiscoveryEngineAbstract od = new OntologyDiscoveryEngine(props, es, spark);
     od.preprocess();
     od.process();
 
-    DiscoveryEngineAbstract md = new MetadataDiscoveryEngine(props, es, spark);
-    md.preprocess();
-    md.process();
-
-    LinkageIntegration li = new LinkageIntegration(props, es, spark);
-    li.execute();
-
-    DiscoveryEngineAbstract recom = new RecommendEngine(props, es, spark);
-    recom.process();
+//    DiscoveryEngineAbstract md = new MetadataDiscoveryEngine(props, es, spark);
+//    md.preprocess();
+//    md.process();
+//
+//    LinkageIntegration li = new LinkageIntegration(props, es, spark);
+//    li.execute();
+//
+//    DiscoveryEngineAbstract recom = new RecommendEngine(props, es, spark);
+//    recom.process();
   }
+  
+public void startRankPD() {
+	PDRank pdr = new PDRank(es, "nutch", "doc");
+	System.out.println(pdr);
+ }
 
   /**
    * Close the connection to the {@link ESDriver} instance.
@@ -306,6 +313,9 @@ public class MudrodEngine {
     // processing only, assuming that preprocessing results is in dataDir
     Option processingOpt = new Option("p", PROCESSING, false, "begin processing with preprocessing results");
 
+    // ranking option for pd metadata, adding weights
+    Option pdRankOpt = new Option("r", RANKING, false, "begin ranking for pd metadata");
+    
     // argument options
     Option dataDirOpt = OptionBuilder.hasArg(true).withArgName("/path/to/data/directory").hasArgs(1).withDescription("the data directory to be processed by Mudrod").withLongOpt("dataDirectory")
         .isRequired().create(DATA_DIR);
@@ -326,6 +336,7 @@ public class MudrodEngine {
     options.addOption(metaIngestOpt);
     options.addOption(fullIngestOpt);
     options.addOption(processingOpt);
+    options.addOption(pdRankOpt);
     options.addOption(dataDirOpt);
     options.addOption(esHostOpt);
     options.addOption(esTCPPortOpt);
@@ -344,6 +355,8 @@ public class MudrodEngine {
         processingType = META_INGEST;
       } else if (line.hasOption(FULL_INGEST)) {
         processingType = FULL_INGEST;
+      } else if (line.hasOption(RANKING)) {
+          processingType = RANKING;
       }
 
       String dataDir = line.getOptionValue(DATA_DIR).replace("\\", "/");
@@ -386,6 +399,9 @@ public class MudrodEngine {
           break;
         case FULL_INGEST:
           me.startFullIngest();
+          break;
+        case RANKING:
+          me.startRankPD();
           break;
         default:
           break;

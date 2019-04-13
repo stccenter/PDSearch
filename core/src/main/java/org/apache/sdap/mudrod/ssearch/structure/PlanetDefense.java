@@ -35,6 +35,7 @@ public class PlanetDefense extends SResult {
   public PlanetDefense(SearchHit hit) {
     Map<String, Object> result = hit.getSource();
     this.term = Double.valueOf(NDForm.format(hit.getScore()));
+    this.credibility = (double) result.get("credibility");
     this.shortName = (String) result.get("title");
     this.longName = (String) result.get("url");
     this.topic = (String) result.get("gold_keywords");

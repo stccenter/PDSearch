@@ -21,7 +21,8 @@ import org.elasticsearch.search.SearchHit;
 
 public class PDRank {
 
-	String[] rankList = {"nasa"};
+	String[] rankList_l1 = {"nasa"};
+	String[] rankList_l2 = {"jaxa", "esa"};
 
 	public PDRank(ESDriver es, String index, String type) {
 		es.createBulkProcessor();
@@ -38,17 +39,26 @@ public class PDRank {
 				Map<String, Object> result = hit.getSource();
 				value = (String) result.get("url");
 //				System.out.println(value);
-				for (String var : rankList) {
+				for (String var : rankList_l1) {
 					if (value.contains(var)) {
 						double ranking = 1;
 						UpdateRequest ur = null;
 						ur = updateES(ur, es, index, type, id, ranking);
 						es.getBulkProcessor().add(ur);
 					} else {
-						double ranking = 0.0;
-						UpdateRequest ur = null;
-						ur = updateES(ur, es, index, type, id, ranking);
-						es.getBulkProcessor().add(ur);
+						for (String var_l2 : rankList_l2) {
+							if (value.contains(var_l2)) {
+								double ranking = 0.5;
+								UpdateRequest ur = null;
+								ur = updateES(ur, es, index, type, id, ranking);
+								es.getBulkProcessor().add(ur);
+							} else {
+								double ranking = 0.0;
+								UpdateRequest ur = null;
+								ur = updateES(ur, es, index, type, id, ranking);
+								es.getBulkProcessor().add(ur);
+							}
+						}
 					}
 				}
 

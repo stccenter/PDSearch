@@ -134,7 +134,7 @@ public class Ranker extends MudrodAbstract implements Serializable {
 	    	double o2WScore = SResult.get(o2, "w_score");
 	        double o1WScore = SResult.get(o1, "w_score");
 	        
-	      if(o2WScore > o1WScore) {
+	      if(o2WScore >= o1WScore) {
 	    	  return 1;
 	      }else {
 	    	  return -1;
